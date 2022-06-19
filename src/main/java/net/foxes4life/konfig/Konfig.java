@@ -4,6 +4,10 @@ import com.google.gson.*;
 import net.foxes4life.konfig.data.KonfigCategory;
 import net.foxes4life.konfig.data.KonfigEntry;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -23,7 +27,7 @@ public class Konfig {
         load();
     }
 
-    public Konfig(String id, String path) {
+    public Konfig(String id, String path) throws IOException {
         configID = id;
         configPath = path;
         load();
