@@ -46,23 +46,12 @@ public class Konfig {
         for (Map.Entry<String, KonfigCategory> category : data.entrySet()) {
             JsonObject catjsondata = new JsonObject();
             for (Map.Entry<String, KonfigEntry> entry : category.getValue().catData.entrySet()) {
-                String[] classSplit = entry.getValue().value.getClass().getName().split("\\.");
-                String classType = classSplit[classSplit.length - 1];
-                // what the fuck is this whole for loop flux
-                switch (classType.toLowerCase()) { // i am very sorry -flux
-                    case "integer": case "float": case "long":
-                        case "double": {
-                            catjsondata.addProperty(entry.getKey(), (Number) entry.getValue().value);
-                            break;
-                        }
-                    case "boolean":{
-                        catjsondata.addProperty(entry.getKey(), (Boolean) entry.getValue().value);
-                        break;
-                    }
-                    case "string":{
-                        catjsondata.addProperty(entry.getKey(), (String) entry.getValue().value);
-                        break;
-                    }
+                if(entry.getValue().value instanceof String) { // this is probably still dumb
+                    catjsondata.addProperty(entry.getKey(), (String) entry.getValue().value);
+                } else if(entry.getValue().value instanceof Number) {
+                    catjsondata.addProperty(entry.getKey(), (Number) entry.getValue().value);
+                } else if(entry.getValue().value instanceof Boolean) {
+                    catjsondata.addProperty(entry.getKey(), (Boolean) entry.getValue().value);
                 }
             }
             jsonData.add(category.getKey(), catjsondata);
