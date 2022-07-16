@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'net.foxes4life'
-version '1.0'
+version '1.1.1'
 
 repositories {
     mavenCentral()
@@ -13,3 +13,16 @@ repositories {
 dependencies {
     implementation('com.google.code.gson:gson:2.9.0')
 }
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'net.foxes4life'
+            artifactId = 'konfig'
+            version = '1.1'
+
+            from components.java
+        }
+    }
+}
+

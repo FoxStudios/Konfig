@@ -21,13 +21,13 @@ public class Konfig {
     JsonObject jsonData;
     HashMap<String, KonfigCategory> data = new HashMap<>();
 
-    public Konfig(String id) throws IOException {
+    public Konfig(String id) {
         configID = id;
         configPath = "config/" + id;
         load();
     }
 
-    public Konfig(String id, String path) throws IOException {
+    public Konfig(String id, String path) {
         configID = id;
         configPath = path;
         load();
@@ -72,8 +72,9 @@ public class Konfig {
 
     public void addCategory(KonfigCategory cat) {
         JsonElement catjsondata = jsonData.get(cat.catName);
+        System.out.println("[Konfig " + configID + "] Loading category " + cat.catName + " with data " + catjsondata);
 
-        if (cat.catJsonData == null) {
+        if (catjsondata == null) {
             cat.catJsonData = new JsonObject();
         } else {
             cat.catJsonData = catjsondata.getAsJsonObject();
@@ -109,5 +110,9 @@ public class Konfig {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    public HashMap<String, KonfigCategory> getData() {
+        return data;
     }
 }
