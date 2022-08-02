@@ -2,12 +2,12 @@ package net.foxes4life.konfig.data;
 
 import com.google.gson.JsonObject;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class KonfigCategory {
     public String catName;
-    public HashMap<String, KonfigEntry> catData = new HashMap<>();
+    public LinkedHashMap<String, KonfigEntry> catData = new LinkedHashMap<>();
     public JsonObject catJsonData;
 
     public KonfigCategory (String name) {

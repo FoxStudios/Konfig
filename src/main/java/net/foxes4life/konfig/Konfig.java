@@ -10,8 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Konfig {
@@ -19,7 +18,7 @@ public class Konfig {
     String configID;
 
     JsonObject jsonData;
-    HashMap<String, KonfigCategory> data = new HashMap<>();
+    LinkedHashMap<String, KonfigCategory> data = new LinkedHashMap<>();
 
     public Konfig(String id) {
         configID = id;
@@ -112,7 +111,7 @@ public class Konfig {
         }
     }
 
-    public HashMap<String, KonfigCategory> getData() {
+    public LinkedHashMap<String, KonfigCategory> getData() {
         return data;
     }
 }
