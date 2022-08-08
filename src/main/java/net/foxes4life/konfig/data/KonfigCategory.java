@@ -14,6 +14,11 @@ public class KonfigCategory {
         catName = name;
     }
 
+    /**
+     * Adds a new entry to the category.
+     * @param name Entry name
+     * @param defaultValue The default value of the entry
+     */
     public void addEntry(String name, Object defaultValue) {
         catData.put(name, new KonfigEntry(this, name, defaultValue));
     }

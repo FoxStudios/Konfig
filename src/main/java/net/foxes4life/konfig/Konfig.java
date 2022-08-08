@@ -20,18 +20,30 @@ public class Konfig {
     JsonObject jsonData;
     LinkedHashMap<String, KonfigCategory> data = new LinkedHashMap<>();
 
+    /**
+     * Creates a new Konfig instance.
+     * @param id Konfig instance id
+     */
     public Konfig(String id) {
         configID = id;
         configPath = "config/" + id;
         load();
     }
 
+    /**
+     * Creates a new Konfig instance with a custom path.
+     * @param id Konfig instance id
+     * @param path The custom folder path
+     */
     public Konfig(String id, String path) {
         configID = id;
         configPath = path;
         load();
     }
 
+    /**
+     * Tries loading the config json file from the disk. (Use after adding all categories!)
+     */
     public void load() {
         try {
             jsonData = JsonParser.parseString(Files.readString(Path.of(configPath + "/config.json"))).getAsJsonObject();
@@ -41,6 +53,10 @@ public class Konfig {
         }
     }
 
+    /**
+     * Saves the data to the disk.
+     * @throws IOException
+     */
     public void save() throws IOException {
         for (Map.Entry<String, KonfigCategory> category : data.entrySet()) {
             JsonObject catjsondata = new JsonObject();
@@ -69,6 +85,10 @@ public class Konfig {
         writer.close();
     }
 
+    /**
+     * Adds a new category for entries.
+     * @param cat The category to be added
+     */
     public void addCategory(KonfigCategory cat) {
         JsonElement catjsondata = jsonData.get(cat.catName);
         System.out.println("[Konfig " + configID + "] Loading category " + cat.catName + " with data " + catjsondata);
@@ -83,6 +103,12 @@ public class Konfig {
         data.put(cat.catName, cat);
     }
 
+    /**
+     * Changes the value of an entry.
+     * @param cat Category name
+     * @param entry Entry name
+     * @param value The new value
+     */
     public void set(String cat, String entry, Object value) {
         try {
             Object val = data.get(cat).catData.get(entry).value;
@@ -103,6 +129,12 @@ public class Konfig {
         }
     }
 
+    /**
+     * Returns a value from an entry.
+     * @param cat Category name
+     * @param entry Entry name
+     * @return The requested entry value (Returns null if not found)
+     */
     public Object get(String cat, String entry) {
         try {
             return data.get(cat).catData.get(entry).value;
@@ -111,6 +143,10 @@ public class Konfig {
         }
     }
 
+    /**
+     * Returns all categories and entries in a Map.
+     * @return The data
+     */
     public LinkedHashMap<String, KonfigCategory> getData() {
         return data;
     }
