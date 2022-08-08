@@ -21,11 +21,11 @@ public class KonfigEntry {
         if (jsonValue == null) {
             value = defaultValue;
         } else {
-            if(defaultValue instanceof String) {
+            if (defaultValue instanceof String) {
                 value = jsonValue.getAsString();
-            } else if(defaultValue instanceof Number) {
+            } else if (defaultValue instanceof Number) {
                 value = jsonValue.getAsNumber();
-            } else if(defaultValue instanceof Boolean) {
+            } else if (defaultValue instanceof Boolean) {
                 value = jsonValue.getAsBoolean();
             }
         }

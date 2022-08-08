@@ -22,6 +22,7 @@ public class Konfig {
 
     /**
      * Creates a new Konfig instance.
+     *
      * @param id Konfig instance id
      */
     public Konfig(String id) {
@@ -32,7 +33,8 @@ public class Konfig {
 
     /**
      * Creates a new Konfig instance with a custom path.
-     * @param id Konfig instance id
+     *
+     * @param id   Konfig instance id
      * @param path The custom folder path
      */
     public Konfig(String id, String path) {
@@ -55,17 +57,18 @@ public class Konfig {
 
     /**
      * Saves the data to the disk.
+     *
      * @throws IOException
      */
     public void save() throws IOException {
         for (Map.Entry<String, KonfigCategory> category : data.entrySet()) {
             JsonObject catjsondata = new JsonObject();
             for (Map.Entry<String, KonfigEntry> entry : category.getValue().catData.entrySet()) {
-                if(entry.getValue().value instanceof String) { // this is probably still dumb
+                if (entry.getValue().value instanceof String) { // this is probably still dumb
                     catjsondata.addProperty(entry.getKey(), (String) entry.getValue().value);
-                } else if(entry.getValue().value instanceof Number) {
+                } else if (entry.getValue().value instanceof Number) {
                     catjsondata.addProperty(entry.getKey(), (Number) entry.getValue().value);
-                } else if(entry.getValue().value instanceof Boolean) {
+                } else if (entry.getValue().value instanceof Boolean) {
                     catjsondata.addProperty(entry.getKey(), (Boolean) entry.getValue().value);
                 }
             }
@@ -74,8 +77,8 @@ public class Konfig {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         File savePath = new File(configPath);
-        if(!savePath.exists()) {
-            if(!savePath.mkdirs()) {
+        if (!savePath.exists()) {
+            if (!savePath.mkdirs()) {
                 throw new IOException("Could not create directory!");
             }
         }
@@ -87,6 +90,7 @@ public class Konfig {
 
     /**
      * Adds a new category for entries.
+     *
      * @param cat The category to be added
      */
     public void addCategory(KonfigCategory cat) {
@@ -105,7 +109,8 @@ public class Konfig {
 
     /**
      * Changes the value of an entry.
-     * @param cat Category name
+     *
+     * @param cat   Category name
      * @param entry Entry name
      * @param value The new value
      */
@@ -113,25 +118,26 @@ public class Konfig {
         try {
             Object val = data.get(cat).catData.get(entry).value;
             boolean isSameType = false;
-            if(val instanceof String) {
-                if(value instanceof String) isSameType = true;
-            } else if(val instanceof Number) {
-                if(value instanceof Number) isSameType = true;
-            } else if(val instanceof Boolean) {
-                if(value instanceof Boolean) isSameType = true;
+            if (val instanceof String) {
+                if (value instanceof String) isSameType = true;
+            } else if (val instanceof Number) {
+                if (value instanceof Number) isSameType = true;
+            } else if (val instanceof Boolean) {
+                if (value instanceof Boolean) isSameType = true;
             }
             if (!isSameType)
                 throw new Exception("Not the same type");
 
             data.get(cat).catData.get(entry).value = value;
         } catch (Exception ex) {
-            System.out.println("[Konfig "+ configID + "] Couldnt set " + cat + "." + entry + " as " + value);
+            System.out.println("[Konfig " + configID + "] Couldnt set " + cat + "." + entry + " as " + value);
         }
     }
 
     /**
      * Returns a value from an entry.
-     * @param cat Category name
+     *
+     * @param cat   Category name
      * @param entry Entry name
      * @return The requested entry value (Returns null if not found)
      */
@@ -145,6 +151,7 @@ public class Konfig {
 
     /**
      * Returns all categories and entries in a Map.
+     *
      * @return The data
      */
     public LinkedHashMap<String, KonfigCategory> getData() {

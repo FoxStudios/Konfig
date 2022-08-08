@@ -10,13 +10,14 @@ public class KonfigCategory {
     public LinkedHashMap<String, KonfigEntry> catData = new LinkedHashMap<>();
     public JsonObject catJsonData;
 
-    public KonfigCategory (String name) {
+    public KonfigCategory(String name) {
         catName = name;
     }
 
     /**
      * Adds a new entry to the category.
-     * @param name Entry name
+     *
+     * @param name         Entry name
      * @param defaultValue The default value of the entry
      */
     public void addEntry(String name, Object defaultValue) {
