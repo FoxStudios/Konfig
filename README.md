@@ -13,7 +13,7 @@ dependencies {
 }
 ```
 **Maven:**
-```maven
+```xml
 <repositories>
     <repository>
         <id>foxes4life</id>
