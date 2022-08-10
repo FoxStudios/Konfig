@@ -22,6 +22,7 @@ public class Konfig {
 
     /**
      * Creates a new Konfig instance.
+     * Automatically tries loading the config file.
      *
      * @param id Konfig instance id
      */
@@ -33,6 +34,7 @@ public class Konfig {
 
     /**
      * Creates a new Konfig instance with a custom path.
+     * Automatically tries loading the config file.
      *
      * @param id   Konfig instance id
      * @param path The custom folder path
@@ -44,7 +46,7 @@ public class Konfig {
     }
 
     /**
-     * Tries loading the config json file from the disk. (Use after adding all categories!)
+     * Tries loading the config json file from the disk.
      */
     public void load() {
         try {
