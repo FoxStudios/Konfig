@@ -1,4 +1,4 @@
-# Konfig
+# Konfig <img src="https://img.shields.io/github/v/release/FoxStudios/Konfig?logo=github&style=for-the-badge">
 A simple and easy to use configuration system for Java.
 
 ## Installation
