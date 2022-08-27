@@ -41,7 +41,7 @@ category.add("key", "default value"); // default value can be a String, Number, 
 konfig.add(category);
 
 // Getting values
-konfig.get("category", "key");
+konfig.get("category", "key").getAsString(); // use .getAsNumber(), .getAsBoolean() or .getAsJson() to get the value as the correct type
 
 // Setting values
 konfig.set("category", "key", "value");
