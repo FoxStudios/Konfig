@@ -36,7 +36,7 @@ dependencies {
 Konfig konfig = new Konfig("example"); // creates a new instance and tries to load the config file
 
 KonfigCategory category = new KonfigCategory("category");
-category.add("key", "default value"); // default value can be a String, Number or Boolean
+category.add("key", "default value"); // default value can be a String, Number, Boolean or JsonElement
 
 konfig.add(category);
 
