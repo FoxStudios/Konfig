@@ -65,13 +65,14 @@ public class Konfig {
     public void save() throws IOException {
         for (Map.Entry<String, KonfigCategory> category : data.entrySet()) {
             JsonObject catjsondata = new JsonObject();
-            for (Map.Entry<String, KonfigEntry> entry : category.getValue().catData.entrySet()) {
-                if (entry.getValue().value instanceof String) { // this is probably still dumb
-                    catjsondata.addProperty(entry.getKey(), (String) entry.getValue().value);
-                } else if (entry.getValue().value instanceof Number) {
-                    catjsondata.addProperty(entry.getKey(), (Number) entry.getValue().value);
-                } else if (entry.getValue().value instanceof Boolean) {
-                    catjsondata.addProperty(entry.getKey(), (Boolean) entry.getValue().value);
+            for (Map.Entry<String, KonfigEntry> mapEntry : category.getValue().catData.entrySet()) {
+                KonfigEntry entry = mapEntry.getValue();
+                if (entry.isString()) { // this is probably still dumb
+                    catjsondata.addProperty(entry.getEntryName(), entry.getAsString());
+                } else if (entry.isNumber()) {
+                    catjsondata.addProperty(entry.getEntryName(), entry.getAsNumber());
+                } else if (entry.isBoolean()) {
+                    catjsondata.addProperty(entry.getEntryName(), entry.getAsBoolean());
                 }
             }
             jsonData.add(category.getKey(), catjsondata);
@@ -97,7 +98,6 @@ public class Konfig {
      */
     public void addCategory(KonfigCategory cat) {
         JsonElement catjsondata = jsonData.get(cat.catName);
-        System.out.println("[Konfig " + configID + "] Loading category " + cat.catName + " with data " + catjsondata);
 
         if (catjsondata == null) {
             cat.catJsonData = new JsonObject();
@@ -118,19 +118,11 @@ public class Konfig {
      */
     public void set(String cat, String entry, Object value) {
         try {
-            Object val = data.get(cat).catData.get(entry).value;
-            boolean isSameType = false;
-            if (val instanceof String) {
-                if (value instanceof String) isSameType = true;
-            } else if (val instanceof Number) {
-                if (value instanceof Number) isSameType = true;
-            } else if (val instanceof Boolean) {
-                if (value instanceof Boolean) isSameType = true;
-            }
-            if (!isSameType)
+            KonfigEntry konfigEntry = data.get(cat).catData.get(entry);
+            if (!konfigEntry.isSameType(value))
                 throw new Exception("Not the same type");
 
-            data.get(cat).catData.get(entry).value = value;
+            data.get(cat).catData.get(entry).setValue(value);
         } catch (Exception ex) {
             System.out.println("[Konfig " + configID + "] Couldnt set " + cat + "." + entry + " as " + value);
         }
@@ -145,7 +137,7 @@ public class Konfig {
      */
     public Object get(String cat, String entry) {
         try {
-            return data.get(cat).catData.get(entry).value;
+            return data.get(cat).catData.get(entry).getValue();
         } catch (Exception ex) {
             return null;
         }
