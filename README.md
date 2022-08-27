@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'net.foxes4life:konfig:1.2.0'
+    implementation 'net.foxes4life:konfig:1.3.0'
 }
 ```
 **Maven:**
@@ -25,7 +25,7 @@ dependencies {
 <dependency>
     <groupId>net.foxes4life</groupId>
     <artifactId>konfig</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
