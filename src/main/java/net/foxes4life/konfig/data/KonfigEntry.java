@@ -47,6 +47,10 @@ public class KonfigEntry {
         return value instanceof Boolean;
     }
 
+    public boolean isJson() {
+        return value instanceof JsonElement;
+    }
+
     public String getAsString() {
         return isString() ? (String) value : null;
     }
@@ -57,6 +61,10 @@ public class KonfigEntry {
 
     public boolean getAsBoolean() {
         return isBoolean() ? (Boolean) value : null;
+    }
+
+    public JsonElement getAsJson() {
+        return isJson() ? (JsonElement) value : null;
     }
 
     public void setValue(Object value) {

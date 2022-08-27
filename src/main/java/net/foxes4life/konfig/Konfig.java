@@ -73,6 +73,8 @@ public class Konfig {
                     catjsondata.addProperty(entry.getEntryName(), entry.getAsNumber());
                 } else if (entry.isBoolean()) {
                     catjsondata.addProperty(entry.getEntryName(), entry.getAsBoolean());
+                } else if (entry.isJson()) {
+                    catjsondata.add(entry.getEntryName(), entry.getAsJson());
                 }
             }
             jsonData.add(category.getKey(), catjsondata);
