@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'net.foxes4life:konfig:1.3.0'
+    implementation 'net.foxes4life:konfig:1.4.0'
 }
 ```
 **Maven:**
@@ -25,27 +25,44 @@ dependencies {
 <dependency>
     <groupId>net.foxes4life</groupId>
     <artifactId>konfig</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
 ## Usage
 
+
+### Creating a config manager
 ```java
-// Defining a configuration
-Konfig konfig = new Konfig("example"); // creates a new instance and tries to load the config file
+import net.foxes4life.konfig.Konfig;
 
-KonfigCategory category = new KonfigCategory("category");
-category.add("key", "default value"); // default value can be a String, Number, Boolean or JsonElement
+public class ExampleConfig extends Konfig<ExampleSettings> {
+    public ExampleConfig() {
+        super("example");
+    }
 
-konfig.add(category);
+    public void initializeDefaults() {
+        setDefault(ExampleSettings.SETTING, "Hello, world!");
+        setDefault(ExampleSettings.ANOTHER_SETTING, 616);
+    }
+}
 
-// Getting values
-konfig.get("category", "key").getAsString(); // use .getAsNumber(), .getAsBoolean() or .getAsJson() to get the value as the correct type
+// In another file
+public enum ExampleSettings {
+    SETTING,
+    ANOTHER_SETTING
+}
+```
 
-// Setting values
-konfig.set("category", "key", "value");
-konfig.save(); // saves the configuration to the file
+### Getting and setting values
+```java
+ExampleConfig config = new ExampleConfig();
+
+String setting = config.get(ExampleSettings.SETTING, String.class);
+int anotherSetting = config.get(ExampleSettings.ANOTHER_SETTING, int.class);
+
+config.set(ExampleSettings.SETTING, "Hello, Konfig!");
+config.save();
 ```
 
 ###### Copyright (C) 2022 FoxStudios

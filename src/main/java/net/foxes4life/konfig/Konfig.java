@@ -1,24 +1,19 @@
 package net.foxes4life.konfig;
 
-import com.google.gson.*;
-import net.foxes4life.konfig.data.KonfigCategory;
-import net.foxes4life.konfig.data.KonfigEntry;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Konfig {
-    String configPath;
-    String configID;
-
-    JsonObject jsonData;
-    LinkedHashMap<String, KonfigCategory> data = new LinkedHashMap<>();
+public class Konfig<TLookUp extends Enum> {
+    private final Path path;
+    private final LinkedHashMap<TLookUp, Object> data = new LinkedHashMap<>();
+    private final LinkedHashMap<TLookUp, Object> defaults = new LinkedHashMap<>();
 
     /**
      * Creates a new Konfig instance.
@@ -27,8 +22,8 @@ public class Konfig {
      * @param id Konfig instance id
      */
     public Konfig(String id) {
-        configID = id;
-        configPath = "config/" + id;
+        this.path = Path.of("config", id, "config.json");
+        initializeDefaults();
         load();
     }
 
@@ -36,121 +31,86 @@ public class Konfig {
      * Creates a new Konfig instance with a custom path.
      * Automatically tries loading the config file.
      *
-     * @param id   Konfig instance id
-     * @param path The custom folder path
+     * @param path The custom path
      */
-    public Konfig(String id, String path) {
-        configID = id;
-        configPath = path;
+    public Konfig(Path path) {
+        this.path = path;
+        initializeDefaults();
         load();
     }
 
-    /**
-     * Tries loading the config json file from the disk.
-     */
+    public void initializeDefaults() {
+        // Override this method to initialize your defaults
+    }
+
     public void load() {
-        try {
-            jsonData = JsonParser.parseString(Files.readString(Path.of(configPath + "/config.json"))).getAsJsonObject();
-        } catch (IOException ex) {
-            System.out.println("Could not loud config file for id " + configID + "! Creating new config...");
-            jsonData = new JsonObject();
-        }
-    }
+        JsonObject jsonData = new JsonObject();
 
-    /**
-     * Saves the data to the disk.
-     *
-     * @throws IOException
-     */
-    public void save() throws IOException {
-        for (Map.Entry<String, KonfigCategory> category : data.entrySet()) {
-            JsonObject catjsondata = new JsonObject();
-            for (Map.Entry<String, KonfigEntry> mapEntry : category.getValue().catData.entrySet()) {
-                KonfigEntry entry = mapEntry.getValue();
-                if (entry.isString()) { // this is probably still dumb
-                    catjsondata.addProperty(entry.getEntryName(), entry.getAsString());
-                } else if (entry.isNumber()) {
-                    catjsondata.addProperty(entry.getEntryName(), entry.getAsNumber());
-                } else if (entry.isBoolean()) {
-                    catjsondata.addProperty(entry.getEntryName(), entry.getAsBoolean());
-                } else if (entry.isJson()) {
-                    catjsondata.add(entry.getEntryName(), entry.getAsJson());
+        if (path.toFile().exists()) {
+            try {
+                jsonData = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
+            } catch (IOException ignored) {}
+        }
+
+        for (Map.Entry<TLookUp, Object> entry : defaults.entrySet()) {
+            if (jsonData.has(entry.getKey().name())) {
+                if (entry.getValue() instanceof Number) {
+                    data.put(entry.getKey(), jsonData.get(entry.getKey().name()).getAsNumber());
+                } else if (entry.getValue() instanceof Boolean) {
+                    data.put(entry.getKey(), jsonData.get(entry.getKey().name()).getAsBoolean());
+                } else if (entry.getValue() instanceof String) {
+                    data.put(entry.getKey(), jsonData.get(entry.getKey().name()).getAsString());
+                } else if (entry.getValue() instanceof JsonElement) {
+                    data.put(entry.getKey(), jsonData.get(entry.getKey().name()));
+                } else {
+                    throw new IllegalArgumentException("Unsupported type: " + entry.getValue().getClass().getName());
                 }
-            }
-            jsonData.add(category.getKey(), catjsondata);
-        }
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        File savePath = new File(configPath);
-        if (!savePath.exists()) {
-            if (!savePath.mkdirs()) {
-                throw new IOException("Could not create directory!");
+            } else {
+                data.put(entry.getKey(), entry.getValue());
             }
         }
-
-        BufferedWriter writer = new BufferedWriter(new FileWriter(new File(configPath, "config.json")));
-        writer.write(gson.toJson(jsonData));
-        writer.close();
     }
 
-    /**
-     * Adds a new category for entries.
-     *
-     * @param cat The category to be added
-     */
-    public void addCategory(KonfigCategory cat) {
-        JsonElement catjsondata = jsonData.get(cat.catName);
+    public void save() {
+        JsonObject jsonData = new JsonObject();
 
-        if (catjsondata == null) {
-            cat.catJsonData = new JsonObject();
-        } else {
-            cat.catJsonData = catjsondata.getAsJsonObject();
+        for (Map.Entry<TLookUp, Object> entry : data.entrySet()) {
+            if (entry.getValue() instanceof Number) {
+                jsonData.addProperty(entry.getKey().name(), (Number) entry.getValue());
+            } else if (entry.getValue() instanceof Boolean) {
+                jsonData.addProperty(entry.getKey().name(), (Boolean) entry.getValue());
+            } else if (entry.getValue() instanceof String) {
+                jsonData.addProperty(entry.getKey().name(), (String) entry.getValue());
+            } else if (entry.getValue() instanceof JsonElement) {
+                jsonData.add(entry.getKey().name(), (JsonElement) entry.getValue());
+            } else {
+                throw new IllegalArgumentException("Unsupported type: " + entry.getValue().getClass().getName());
+            }
         }
 
-        cat.loadStuff();
-        data.put(cat.catName, cat);
+        try {
+            Files.createDirectories(path.getParent());
+            Files.writeString(path, jsonData.toString());
+        } catch (IOException ignored) {}
     }
 
-    /**
-     * Changes the value of an entry.
-     *
-     * @param cat   Category name
-     * @param entry Entry name
-     * @param value The new value
-     */
-    public void set(String cat, String entry, Object value) {
-        try {
-            KonfigEntry konfigEntry = data.get(cat).catData.get(entry);
-            if (!konfigEntry.isSameType(value))
-                throw new Exception("Not the same type");
-
-            data.get(cat).catData.get(entry).setValue(value);
-        } catch (Exception ex) {
-            System.out.println("[Konfig " + configID + "] Couldnt set " + cat + "." + entry + " as " + value);
-        }
+    public void setDefault(TLookUp lookup, Object value) {
+        defaults.put(lookup, value);
     }
 
-    /**
-     * Returns a value from an entry.
-     *
-     * @param cat   Category name
-     * @param entry Entry name
-     * @return The requested entry value (Returns null if not found)
-     */
-    public Object get(String cat, String entry) {
+    public <TValue extends Enum> TValue get(TLookUp lookup, Class<TValue> type) {
         try {
-            return data.get(cat).catData.get(entry).getValue();
-        } catch (Exception ex) {
+            if (data.containsKey(lookup)) {
+                return type.cast(data.get(lookup));
+            } else {
+                return type.cast(defaults.get(lookup));
+            }
+        } catch (ClassCastException e) {
             return null;
         }
     }
 
-    /**
-     * Returns all categories and entries in a Map.
-     *
-     * @return The data
-     */
-    public LinkedHashMap<String, KonfigCategory> getData() {
-        return data;
+    public void set(TLookUp lookup, Object value) {
+        data.put(lookup, value);
     }
 }

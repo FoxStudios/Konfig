@@ -7,7 +7,7 @@
     <groupId>net.foxes4life</groupId>
     <artifactId>konfig</artifactId>
     <name>konfig</name>
-    <version>1.3.1</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
 
     <properties>
