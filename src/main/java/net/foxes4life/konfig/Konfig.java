@@ -98,7 +98,7 @@ public class Konfig<TLookUp extends Enum> {
         defaults.put(lookup, value);
     }
 
-    public <TValue extends Enum> TValue get(TLookUp lookup, Class<TValue> type) {
+    public <T> T get(TLookUp lookup, Class<T> type) {
         try {
             if (data.containsKey(lookup)) {
                 return type.cast(data.get(lookup));
